@@ -159,4 +159,11 @@ W przypadku problemów:
 
 ---
 
-**Uwaga:** Firebase jest już skonfigurowany w projekcie. Aplikacja używa Firebase w trybie testowym. 
+**Uwaga:** Firebase jest już skonfigurowany w projekcie. Aplikacja używa Firebase w trybie testowym.
+
+## Dane logowania administratora (środowisko testowe)
+
+- **Email:** admin@admin.com
+- **Hasło:** admin123
+
+> Konto administratora należy utworzyć ręcznie w Firebase Authentication oraz przypisać mu rolę `admin` w kolekcji `users` w Firestore. 

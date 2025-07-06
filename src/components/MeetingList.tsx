@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Meeting } from '../models/Meeting';
 import { addMeeting, updateMeeting, deleteMeeting, subscribeMeetings } from '../services/meetingService';
 import { useAuth } from '../context/AuthContext';
-import { Box, IconButton, List, ListItem, ListItemText, Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { Box, IconButton, List, ListItem, ListItemText, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import MeetingForm from './MeetingForm';
@@ -24,7 +24,7 @@ const defaultMeeting = {
 
 const PAGE_SIZE = 10;
 
-const MeetingList: React.FC = () => {
+const MeetingList: React.FC<{ onAdd: () => void }> = () => {
   const { user, role } = useAuth();
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [open, setOpen] = useState(false);
@@ -34,8 +34,8 @@ const MeetingList: React.FC = () => {
   const [overlapError, setOverlapError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
-      const unsubscribe = subscribeMeetings(user.uid, role === 'admin', setMeetings);
+    if (user && user.email && user.uid) {
+      const unsubscribe = subscribeMeetings(user.uid, user.email, role === 'admin', setMeetings);
       return () => unsubscribe();
     }
   }, [user, role]);
@@ -58,12 +58,6 @@ const MeetingList: React.FC = () => {
 
   const handleEdit = (meeting: Meeting) => {
     setEditMeeting(meeting);
-    setOverlapError(null);
-    setOpen(true);
-  };
-
-  const handleAdd = () => {
-    setEditMeeting(null);
     setOverlapError(null);
     setOpen(true);
   };
@@ -96,10 +90,10 @@ const MeetingList: React.FC = () => {
 
   return (
     <Box>
+      <Typography variant="h6" sx={{ mb: 1 }}>
+        Filtruj spotkania
+      </Typography>
       <MeetingFilters filters={filters} onChange={setFilters} onReset={handleResetFilters} />
-      <Button variant="contained" color="primary" onClick={handleAdd} sx={{ mb: 2 }}>
-        Dodaj rezerwację
-      </Button>
       <List>
         {paginatedMeetings.map((meeting) => (
           <ListItem key={meeting.id} divider>
